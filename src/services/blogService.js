@@ -57,3 +57,22 @@ export const deleteBlog = async (id) => {
     throw error;
   }
 };
+
+// Upload image to local public folder (instead of Firebase Storage)
+export const uploadImage = async (file) => {
+  try {
+    // For now, we'll simulate uploading to public/blog-images
+    // In a real implementation, you'd handle file upload to your server
+    const fileName = `${Date.now()}-${file.name}`;
+    const imageUrl = `/blog-images/${fileName}`;
+
+    // Note: This is a placeholder. In production, you'd need a backend
+    // to handle actual file uploads to the public folder
+    console.log('Image would be uploaded to:', imageUrl);
+
+    return imageUrl;
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    throw error;
+  }
+};
