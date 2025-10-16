@@ -1,0 +1,104 @@
+/* Custom styles for Green IQ - Minimalistic and Modern */
+
+body {
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.navbar {
+  background-color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #28a745 !important;
+}
+
+.card {
+  border: none;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.card-title {
+  color: #212529;
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.card-text {
+  color: #6c757d;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.btn-outline-primary {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.btn-outline-primary:hover {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+.text-muted {
+  color: #6c757d !important;
+  font-size: 0.875rem;
+}
+
+footer {
+  background-color: #ffffff;
+  border-top: 1px solid #e9ecef;
+  margin-top: auto;
+}
+
+.container {
+  max-width: 1200px;
+}
+
+h1 {
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 2rem;
+}
+
+.spinner-border {
+  color: #28a745;
+}
+
+@media (max-width: 768px) {
+  .navbar-nav {
+    text-align: center;
+  }
+
+  .card {
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+}
