@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { addBlog } from '../services/blogService';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -120,9 +121,14 @@ const Admin = () => {
           <div className="col-md-8">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h1>Add New Blog Post</h1>
-              <button onClick={handleLogout} className="btn btn-outline-danger">
-                Logout
-              </button>
+              <div>
+                <Link to="/admin/analytics" className="btn btn-info me-2">
+                  View Analytics
+                </Link>
+                <button onClick={handleLogout} className="btn btn-outline-danger">
+                  Logout
+                </button>
+              </div>
             </div>
             {message && (
               <div className={`alert ${message.includes('successfully') ? 'alert-success' : 'alert-danger'}`} role="alert">
