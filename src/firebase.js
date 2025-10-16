@@ -21,3 +21,16 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Cloud Firestore and get a reference to the service
 export const db = getFirestore(app);
+
+// Add error handling for Firestore initialization
+try {
+  // Configure Firestore settings to reduce connection issues
+  import('firebase/firestore').then(({ connectFirestoreEmulator }) => {
+    // Only connect to emulator in development
+    if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_FIRESTORE_EMULATOR) {
+      connectFirestoreEmulator(db, 'localhost', 8080);
+    }
+  });
+} catch (error) {
+  console.warn('Firestore configuration warning:', error);
+}

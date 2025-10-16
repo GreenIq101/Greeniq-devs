@@ -30,7 +30,8 @@ export const getBlogs = async () => {
     return blogs;
   } catch (error) {
     console.error('Error getting blogs:', error);
-    throw error;
+    // Return empty array instead of throwing error to prevent app crashes
+    return [];
   }
 };
 

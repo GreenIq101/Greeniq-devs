@@ -19,6 +19,7 @@ const Home = () => {
         setBlogPosts(blogs);
       } catch (error) {
         console.error('Error fetching blogs:', error);
+        // Don't show error to user, just show empty state
       } finally {
         setLoading(false);
       }

@@ -47,6 +47,7 @@ const AdminAnalytics = () => {
       setBlogs(blogData);
     } catch (error) {
       console.error('Error fetching blogs:', error);
+      setBlogs([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
