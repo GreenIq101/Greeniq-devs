@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { addBlog } from '../services/blogService';
+import { generateBlogContent, generateTitleSuggestions, generateExcerpt } from '../services/aiService';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -16,6 +17,11 @@ const Admin = () => {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [aiTopic, setAiTopic] = useState('');
+  const [aiTone, setAiTone] = useState('professional');
+  const [aiLength, setAiLength] = useState('medium');
+  const [generating, setGenerating] = useState(false);
+  const [titleSuggestions, setTitleSuggestions] = useState([]);
 
   // Simple password protection (in production, use proper authentication)
   const ADMIN_PASSWORD = 'darkhan';
@@ -43,6 +49,61 @@ const Admin = () => {
     setIsAuthenticated(false);
     sessionStorage.removeItem('adminAuthenticated');
     setPassword('');
+  };
+
+  const handleGenerateTitles = async () => {
+    if (!aiTopic.trim()) {
+      setMessage('Please enter a topic for title generation.');
+      return;
+    }
+
+    setGenerating(true);
+    setMessage('');
+
+    try {
+      const suggestions = await generateTitleSuggestions(aiTopic);
+      setTitleSuggestions(suggestions);
+      setMessage('Title suggestions generated successfully!');
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleGenerateContent = async () => {
+    if (!aiTopic.trim()) {
+      setMessage('Please enter a topic for content generation.');
+      return;
+    }
+
+    setGenerating(true);
+    setMessage('');
+
+    try {
+      const content = await generateBlogContent(aiTopic, aiTone, aiLength);
+      const excerpt = await generateExcerpt(content);
+
+      setFormData({
+        ...formData,
+        title: titleSuggestions[0] || `Sustainable Technology: ${aiTopic}`,
+        content: content,
+        excerpt: excerpt
+      });
+
+      setMessage('AI-generated content created successfully! Review and edit as needed.');
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleTitleSelect = (title) => {
+    setFormData({
+      ...formData,
+      title: title
+    });
   };
 
   const handleChange = (e) => {
@@ -135,6 +196,93 @@ const Admin = () => {
                 {message}
               </div>
             )}
+
+            {/* AI Content Generation Section */}
+            <div className="card p-4 mb-4">
+              <h3 className="mb-3">AI Content Generator</h3>
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="mb-3">
+                    <label htmlFor="aiTopic" className="form-label">Topic</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="aiTopic"
+                      value={aiTopic}
+                      onChange={(e) => setAiTopic(e.target.value)}
+                      placeholder="e.g., Solar Energy Innovations"
+                    />
+                  </div>
+                </div>
+                <div className="col-md-3">
+                  <div className="mb-3">
+                    <label htmlFor="aiTone" className="form-label">Tone</label>
+                    <select
+                      className="form-select"
+                      id="aiTone"
+                      value={aiTone}
+                      onChange={(e) => setAiTone(e.target.value)}
+                    >
+                      <option value="professional">Professional</option>
+                      <option value="casual">Casual</option>
+                      <option value="enthusiastic">Enthusiastic</option>
+                      <option value="educational">Educational</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="col-md-3">
+                  <div className="mb-3">
+                    <label htmlFor="aiLength" className="form-label">Length</label>
+                    <select
+                      className="form-select"
+                      id="aiLength"
+                      value={aiLength}
+                      onChange={(e) => setAiLength(e.target.value)}
+                    >
+                      <option value="short">Short (300-500 words)</option>
+                      <option value="medium">Medium (600-800 words)</option>
+                      <option value="long">Long (1000-1200 words)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className="d-flex gap-2 mb-3">
+                <button
+                  type="button"
+                  className="btn btn-outline-primary"
+                  onClick={handleGenerateTitles}
+                  disabled={generating}
+                >
+                  {generating ? 'Generating...' : 'Generate Title Ideas'}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleGenerateContent}
+                  disabled={generating}
+                >
+                  {generating ? 'Generating...' : 'Generate Full Content'}
+                </button>
+              </div>
+              {titleSuggestions.length > 0 && (
+                <div className="mb-3">
+                  <h5>Title Suggestions:</h5>
+                  <div className="list-group">
+                    {titleSuggestions.map((title, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        className="list-group-item list-group-item-action"
+                        onClick={() => handleTitleSelect(title)}
+                      >
+                        {title}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <form onSubmit={handleSubmit} className="card p-4">
               <div className="mb-3">
                 <label htmlFor="title" className="form-label">Title</label>
