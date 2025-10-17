@@ -120,7 +120,7 @@ const Admin = () => {
 
     try {
       await addBlog(formData);
-      setMessage('Blog post added successfully!');
+      setMessage('Blog post added successfully! (Note: Using offline mode due to connection issues)');
       setFormData({
         title: '',
         excerpt: '',
