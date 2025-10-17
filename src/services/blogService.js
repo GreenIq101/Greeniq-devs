@@ -1,39 +1,49 @@
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, isFirestoreEnabled, mockStorage } from '../firebase';
 
-const blogsCollection = collection(db, 'blogs');
+// Use mock storage instead of Firestore for this demo
+const blogsCollection = isFirestoreEnabled ? collection(db, 'blogs') : null;
 
 // Add a new blog post
 export const addBlog = async (blogData) => {
-  try {
-    const docRef = await addDoc(blogsCollection, {
-      ...blogData,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
-    return docRef.id;
-  } catch (error) {
-    console.error('Error adding blog:', error);
-    // Return a mock success for demo purposes when Firestore fails
-    console.warn('Using mock blog creation due to Firestore connection issues');
-    return `mock-${Date.now()}`;
+  if (isFirestoreEnabled) {
+    try {
+      const docRef = await addDoc(blogsCollection, {
+        ...blogData,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('Error adding blog:', error);
+      // Fallback to mock storage
+      return mockStorage.saveBlog(blogData);
+    }
+  } else {
+    // Use mock storage
+    return mockStorage.saveBlog(blogData);
   }
 };
 
 // Get all blog posts
 export const getBlogs = async () => {
-  try {
-    const q = query(blogsCollection, orderBy('createdAt', 'desc'));
-    const querySnapshot = await getDocs(q);
-    const blogs = [];
-    querySnapshot.forEach((doc) => {
-      blogs.push({ id: doc.id, ...doc.data() });
-    });
-    return blogs;
-  } catch (error) {
-    console.error('Error getting blogs:', error);
-    // Return empty array instead of throwing error to prevent app crashes
-    return [];
+  if (isFirestoreEnabled) {
+    try {
+      const q = query(blogsCollection, orderBy('createdAt', 'desc'));
+      const querySnapshot = await getDocs(q);
+      const blogs = [];
+      querySnapshot.forEach((doc) => {
+        blogs.push({ id: doc.id, ...doc.data() });
+      });
+      return blogs;
+    } catch (error) {
+      console.error('Error getting blogs:', error);
+      // Fallback to mock storage
+      return mockStorage.getBlogs();
+    }
+  } else {
+    // Use mock storage
+    return mockStorage.getBlogs();
   }
 };
 

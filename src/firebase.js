@@ -22,15 +22,28 @@ const app = initializeApp(firebaseConfig);
 // Initialize Cloud Firestore and get a reference to the service
 export const db = getFirestore(app);
 
-// Add error handling for Firestore initialization
-try {
-  // Configure Firestore settings to reduce connection issues
-  import('firebase/firestore').then(({ connectFirestoreEmulator }) => {
-    // Only connect to emulator in development
-    if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_FIRESTORE_EMULATOR) {
-      connectFirestoreEmulator(db, 'localhost', 8080);
-    }
-  });
-} catch (error) {
-  console.warn('Firestore configuration warning:', error);
-}
+// Disable Firestore for this demo to prevent connection errors
+// We'll use localStorage or mock data instead
+export const isFirestoreEnabled = false;
+
+// Mock storage functions to replace Firestore
+export const mockStorage = {
+  blogs: JSON.parse(localStorage.getItem('mockBlogs') || '[]'),
+
+  saveBlog: (blogData) => {
+    const blogs = JSON.parse(localStorage.getItem('mockBlogs') || '[]');
+    const newBlog = {
+      ...blogData,
+      id: `mock-${Date.now()}`,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    blogs.unshift(newBlog); // Add to beginning
+    localStorage.setItem('mockBlogs', JSON.stringify(blogs));
+    return newBlog.id;
+  },
+
+  getBlogs: () => {
+    return JSON.parse(localStorage.getItem('mockBlogs') || '[]');
+  }
+};
